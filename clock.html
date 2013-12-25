@@ -1,0 +1,669 @@
+﻿<!doctype html>
+<html lang="en">
+	<head>
+		<title>JavaScript Patterns</title>
+		<meta charset="utf-8">
+		<script src="js/jquery-1.7.1.min.js" type="text/javascript"></script>  
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine"> 
+	</head>
+	<body>
+	    <canvas id="mycanvas">  
+        </canvas> 
+        <script type="text/javascript">
+            $.log = function(msg) {
+                console.log(msg);
+            }
+
+</script>  
+		<script type="text/javascript">
+		    $(
+function() {
+    var canvas = document.getElementById("mycanvas");
+    $.log(canvas.width);
+    $.log(canvas.height);
+    var context = canvas.getContext("2d");
+    $.log(context.canvas);
+    $.log(context.fillStyle); //要填充的区域的颜色  
+    $.log(context.strokeStyle); //要绘制的线条的颜色  
+    $.log(context.lineCap); //笔帽样式  
+    $.log(context.lineJoin); //两条连续线段的连接样式  
+    $.log(context.lineWidth); //线段的宽度  
+    $.log(context.miterLimit); //斜联接  
+    $.log(context.shadowColor); //阴影的颜色，默认为#000000，  
+    $.log(context.shadowOffsetX); //阴影在x方向上的偏移量，默认为0，不受坐标转换的影响。  
+    $.log(context.shadowOffsetY); //阴影在y方向上的偏移量，默认为0，不受坐标转换的影响。  
+    $.log(context.shadowBlur); //阴影的模糊度，默认为0，负数值将会被忽略  
+}
+);
+
+
+/*
+
+
+//各种线
+$(
+function() {
+    var canvas = document.getElementById("mycanvas");
+    var context = canvas.getContext("2d");
+    context.strokeStyle = "rgb(255, 0, 0)";
+
+    context.beginPath();
+    context.lineCap = "butt"; //默认  
+    context.lineWidth = 10;
+    context.moveTo(10, 10);
+    context.lineTo(100, 10); //简单的一条线  
+    context.stroke(); //该方法真正在画布上绘制该线段  
+
+    context.beginPath();
+    context.lineCap = "round"; //圆形线头  
+    context.moveTo(10, 30);
+    context.lineTo(100, 30);
+    context.stroke(); //该方法真正在画布上绘制该线段  
+
+    context.beginPath();
+    context.lineCap = "square"; //方形线头  
+    context.moveTo(10, 50);
+    context.lineTo(100, 50);
+    context.stroke(); //该方法真正在画布上绘制该线段  
+}
+);
+
+
+
+//各种阴影
+$(
+function() {
+    var canvas = document.getElementById("mycanvas");
+    var context = canvas.getContext("2d");
+    context.strokeStyle = "rgb(255, 0, 0)";
+    context.lineWidth = 10;
+    context.shadowColor = "#0000FF";
+
+    context.beginPath();
+    context.lineCap = "round";
+    context.moveTo(10, 10);
+    context.lineTo(100, 10);
+    context.shadowOffsetX = 10;
+    context.shadowBlur = 10;
+    context.stroke();
+
+    context.beginPath();
+    context.lineCap = "round";
+    context.moveTo(10, 30);
+    context.lineTo(100, 30);
+    context.shadowOffsetY = 10;
+    context.shadowBlur = 10;
+    context.stroke();
+
+}
+);
+
+
+
+//各种线连接
+$(
+function() {
+    var canvas = document.getElementById("mycanvas");
+    var context = canvas.getContext("2d");
+    context.strokeStyle = "rgb(255, 0, 0)";
+    context.lineWidth = 10;
+    context.shadowColor = "#0000FF";
+
+    context.beginPath();
+    context.lineJoin = "miter"; //两条线段的外边缘一直扩展到它们相交  
+    context.moveTo(10, 70);
+    context.lineTo(50, 10);
+    context.lineTo(80, 70);
+    context.stroke();
+
+    context.lineJoin = "bevel"; //以一个斜边进行连接  
+    context.moveTo(100, 70);
+    context.lineTo(140, 10);
+    context.lineTo(180, 70);
+    context.stroke();
+
+    context.lineJoin = "round"; //:以一个圆弧边进行连接  
+    context.beginPath();
+    context.moveTo(200, 70);
+    context.lineTo(240, 10);
+    context.lineTo(280, 70);
+    context.stroke();
+    context.closePath(); //关闭path  
+
+}
+);
+
+
+//miter
+$(
+function() {
+    var canvas = document.getElementById("mycanvas");
+    var context = canvas.getContext("2d");
+    context.strokeStyle = "rgb(255, 0, 0)";
+    context.lineWidth = 10;
+    context.shadowColor = "#0000FF";
+
+
+    context.beginPath();
+    context.miterLimit = 1; //miterLimit 属性为斜面的长度设置一个上限。  
+    //只对线条使用设置为 "miter" 的 lineJoin 属性绘制并且两条线段以锐角相交的时候有效  
+    context.lineJoin = "miter"; //两条线段的外边缘一直扩展到它们相交  
+    context.moveTo(10, 70);
+    context.lineTo(50, 10);
+    context.lineTo(80, 70);
+    context.stroke();
+
+}
+);
+
+//几种几何图形
+$(
+function() {
+    var canvas = document.getElementById("mycanvas");
+    canvas.height = 500; //改变默认高度  
+    canvas.width = 500;
+    var context = canvas.getContext("2d");
+    context.strokeStyle = "rgb(255, 0, 0)";
+    context.fillStyle = "#AABBCC";
+    context.lineWidth = 2;
+    context.shadowColor = "#0000FF";
+
+    //矩形  
+    context.beginPath();
+    context.fillRect(10, 10, 50, 50); //实体矩形:x,y,width,height  
+    context.strokeRect(70, 10, 50, 50)//空心矩形:x,y,width,height  
+
+    //context.move(10,100);  
+
+    //圆弧:x, y, radius, startAngle, endAngle, anticlockwise  
+    context.beginPath();
+    context.arc(35, 110, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+    context.stroke();
+    //context.closePath();  
+
+    context.beginPath();
+    context.arc(85, 110, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 180, false);
+    context.stroke();
+    //context.closePath();  
+
+    context.beginPath();
+    context.arc(135, 110, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 180, true);
+    context.stroke();
+    //context.closePath();  
+
+    context.beginPath();
+    context.arc(185, 110, 25, (Math.PI / 180) * 180, (Math.PI / 180) * 360, true);
+    context.stroke();
+    //context.closePath();  
+
+    context.beginPath();
+    context.arc(235, 110, 25, (Math.PI / 180) * 90, (Math.PI / 180) * 0, false);
+    context.fillStyle = "blue";
+    context.fill();
+    //context.stroke();  
+    //context.closePath();  
+
+    context.beginPath();
+    context.arc(285, 110, 25, (Math.PI / 180) * 180, (Math.PI / 180) * 45, false);
+    context.closePath();
+    context.stroke();
+
+    context.beginPath();
+    context.arc(335, 110, 25, (Math.PI / 180) * 180, (Math.PI / 180) * 45, false);
+    context.closePath();
+    context.fillStyle = "blue";
+    context.fill();
+    context.stroke();
+
+    //曲线  
+
+
+    context.beginPath();
+    context.moveTo(10, 160); //二次贝塞尔曲线的起始点  
+    //controlX, controlY, endX, endY  
+    context.quadraticCurveTo(70, 280, 235, 140);
+    context.stroke();
+    context.closePath();
+
+    context.beginPath();
+    context.moveTo(10, 300); //三次贝塞尔曲线的起始点  
+    //controlX1, controlY1, controlX2, controlY2, endX, endY  
+    context.bezierCurveTo(70, 280, 50, 400, 235, 190);
+    context.stroke();
+    context.closePath();
+
+
+}
+);
+
+//平移
+$(
+function() {
+    var canvas = document.getElementById("mycanvas");
+    canvas.height = 500; //改变默认高度  
+    canvas.width = 500;
+    var context = canvas.getContext("2d");
+    context.strokeStyle = "rgb(255, 0, 0)";
+    context.fillStyle = "#AABBCC";
+    context.lineWidth = 2;
+    context.shadowColor = "#0000FF";
+    context.moveTo(10, 10);
+    //context.beginPath();  
+    //context.beginPath();  
+    context.fillRect(10, 10, 50, 50); //实体矩形:x,y,width,height  
+    //context.stroke();  
+    $(canvas).on(
+    "click",
+    { "context": context },
+    function(e) {
+        $.log(e.data.context);
+        var ctx = e.data.context;
+        ctx.translate(10, 10); //再最后的路径点上偏移10*10的位置  
+        context.fillRect(10, 10, 50, 50);
+        context.stroke();
+    }
+    );
+}
+);
+
+//缩放
+$(
+function() {
+    var canvas = document.getElementById("mycanvas");
+    canvas.height = 500; //改变默认高度  
+    canvas.width = 500;
+    var context = canvas.getContext("2d");
+    context.strokeStyle = "rgb(255, 0, 0)";
+    context.fillStyle = "#AABBCC";
+    context.lineWidth = 2;
+    context.shadowColor = "#0000FF";
+    context.moveTo(10, 10);
+    //context.beginPath();  
+    //context.beginPath();  
+    context.fillRect(10, 10, 50, 50); //实体矩形:x,y,width,height  
+    //context.stroke();  
+    $(canvas).on(
+    "click",
+    { "context": context },
+    function(e) {
+        $.log(e.data.context);
+        var ctx = e.data.context;
+        ctx.scale(1.1, 1.1); //在最后的大小基础上缩放倍数 必须是正数  
+        context.fillRect(10, 10, 50, 50);
+        context.stroke();
+    }
+    );
+}
+);
+
+//旋转
+$(
+function() {
+    var canvas = document.getElementById("mycanvas");
+    canvas.height = 500; //改变默认高度  
+    canvas.width = 500;
+    var context = canvas.getContext("2d");
+    context.strokeStyle = "rgb(255, 0, 0)";
+    context.fillStyle = "#AABBCC";
+    context.lineWidth = 2;
+    context.shadowColor = "#0000FF";
+    context.moveTo(10, 10);
+    //context.beginPath();  
+    //context.beginPath();  
+    context.fillRect(10, 10, 50, 50); //实体矩形:x,y,width,height  
+    //context.stroke();  
+    $(canvas).on(
+    "click",
+    { "context": context },
+    function(e) {
+        $.log(e.data.context);
+        var ctx = e.data.context;
+        ctx.rotate((Math.PI / 180) * 10); //旋转的角度，旋转的中心是canvas坐标原点  
+        context.fillRect(10, 10, 50, 50);
+        context.stroke();
+    }
+    );
+}
+);
+
+//组合
+$(
+function() {
+    var canvas = document.getElementById("mycanvas");
+    canvas.height = 100;
+    canvas.width = 100;
+    var context = canvas.getContext("2d");
+    context.fillStyle = "#AABBCC";
+    context.fillRect(10, 10, 50, 50);
+    //默认 新图形会覆盖在原有内容之上  
+    context.globalCompositeOperation = "source-over";
+    context.fillStyle = "blue";
+    context.arc(70, 30, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+    context.fill();
+    $("span").html(context.globalCompositeOperation);
+    $(canvas).toggle(
+    function() {
+        canvas.width = 100;
+        // 原有内容之下绘制新图形  
+        context.clearRect(0, 0, 500, 500);
+        context.beginPath();
+        context = canvas.getContext("2d");
+        context.fillStyle = "#AABBCC";
+        context.fillRect(10, 10, 50, 50);
+        context.globalCompositeOperation = "destination-over";
+        context.fillStyle = "blue";
+        context.arc(70, 30, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+        context.fill();
+        $("span").html(context.globalCompositeOperation);
+    },
+    function() {
+        canvas.width = 100;
+        //新图形会仅仅出现与原有内容重叠的部分。其它区域都变成透明的  
+        context.clearRect(0, 0, 500, 500);
+        context.beginPath();
+        context.fillStyle = "#AABBCC";
+        context.fillRect(10, 10, 50, 50);
+        context.globalCompositeOperation = "source-in";
+        context.fillStyle = "blue";
+        context.arc(70, 30, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+        context.fill();
+        $("span").html(context.globalCompositeOperation);
+    },
+    function() {
+        canvas.width = 100;
+        //原有内容中与新图形重叠的部分会被保留，其它区域都变成透明的destination-in  
+        context.clearRect(0, 0, 500, 500);
+        context.beginPath();
+        context = canvas.getContext("2d");
+        context.fillStyle = "#AABBCC";
+        context.fillRect(10, 10, 50, 50);
+        context.globalCompositeOperation = "destination-in";
+        context.fillStyle = "blue";
+        context.arc(70, 30, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+        context.fill();
+        $("span").html(context.globalCompositeOperation);
+
+    },
+    function() {
+        canvas.width = 100;
+        //只有新图形中与原有内容不重叠的部分会被绘制出来source-out  
+        context.clearRect(0, 0, 500, 500);
+        context.beginPath();
+        context = canvas.getContext("2d");
+        context.fillStyle = "#AABBCC";
+        context.fillRect(10, 10, 50, 50);
+        context.globalCompositeOperation = "source-out";
+        context.fillStyle = "blue";
+        context.arc(70, 30, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+        context.fill();
+        $("span").html(context.globalCompositeOperation);
+    },
+    function() {
+        canvas.width = 100;
+        //原有内容中与新图形不重叠的部分会被保留  
+        context.clearRect(0, 0, 500, 500);
+        context.beginPath();
+        context = canvas.getContext("2d");
+        context.fillStyle = "#AABBCC";
+        context.fillRect(10, 10, 50, 50);
+        context.globalCompositeOperation = "destination-out";
+        context.fillStyle = "blue";
+        context.arc(70, 30, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+        context.fill();
+        $("span").html(context.globalCompositeOperation);
+    },
+    function() {
+        canvas.width = 100;
+        //新图形中与原有内容重叠的部分会被绘制，并覆盖于原有内容之上  
+        context.clearRect(0, 0, 500, 500);
+        context.beginPath();
+        context = canvas.getContext("2d");
+        context.fillStyle = "#AABBCC";
+        context.fillRect(10, 10, 50, 50);
+        context.globalCompositeOperation = "source-atop";
+        context.fillStyle = "blue";
+        context.arc(70, 30, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+        context.fill();
+        $("span").html(context.globalCompositeOperation);
+    },
+    function() {
+        canvas.width = 100;
+        //原有内容中与新内容重叠的部分会被保留，并会在原有内容之下绘制新图形  
+        context.clearRect(0, 0, 500, 500);
+        context.beginPath();
+        context = canvas.getContext("2d");
+        context.fillStyle = "#AABBCC";
+        context.fillRect(10, 10, 50, 50);
+        context.globalCompositeOperation = "destination-atop";
+        context.fillStyle = "blue";
+        context.arc(70, 30, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+        context.fill();
+        $("span").html(context.globalCompositeOperation);
+    },
+    function() {
+        canvas.width = 100;
+        //两图形中重叠部分作加色处理  
+        context.clearRect(0, 0, 500, 500);
+        context.beginPath();
+        context = canvas.getContext("2d");
+        context.fillStyle = "#AABBCC";
+        context.fillRect(10, 10, 50, 50);
+        context.globalCompositeOperation = "lighter";
+        context.fillStyle = "blue";
+        context.arc(70, 30, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+        context.fill();
+        $("span").html(context.globalCompositeOperation);
+    },
+    function() {
+        canvas.width = 100;
+        //两图形中重叠的部分作减色处理darker  
+        context.clearRect(0, 0, 500, 500);
+        context.beginPath();
+        context = canvas.getContext("2d");
+        context.fillStyle = "#AABBCC";
+        context.fillRect(10, 10, 50, 50);
+        context.globalCompositeOperation = "darker";
+        context.fillStyle = "blue";
+        context.arc(70, 30, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+        context.fill();
+        $("span").html(context.globalCompositeOperation);
+    },
+    function() {
+        canvas.width = 100;
+        //重叠的部分会变成透明  
+        context.clearRect(0, 0, 500, 500);
+        context.beginPath();
+        context = canvas.getContext("2d");
+        context.fillStyle = "#AABBCC";
+        context.fillRect(10, 10, 50, 50);
+        context.globalCompositeOperation = "xor";
+        context.fillStyle = "blue";
+        context.arc(70, 30, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+        context.fill();
+        $("span").html(context.globalCompositeOperation);
+    },
+    function() {
+        canvas.width = 100;
+        //只有新图形会被保留，其它都被清除掉  
+        context.clearRect(0, 0, 500, 500);
+        context.beginPath();
+        context = canvas.getContext("2d");
+        context.fillStyle = "#AABBCC";
+        context.fillRect(10, 10, 50, 50);
+        context.globalCompositeOperation = "copy";
+        context.fillStyle = "blue";
+        context.arc(70, 30, 25, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+        context.fill();
+        $("span").html(context.globalCompositeOperation);
+        alert("演示结束");
+    }
+    );
+}
+);
+
+//字体
+$(
+    function() {
+        var canvas = document.getElementById("mycanvas");
+        canvas.height = 200;
+        canvas.width = 200;
+        var context = canvas.getContext("2d");
+        context.font = "20px 新宋体";
+        context.fillText("这是实心新宋体", 10, 30);
+        context.strokeText("这是空心新宋体", 10, 60);
+        context.font = "20px Tangerine serif";
+        context.fillText("Hello HTML5", 10, 100);
+        context.strokeText("Hello HTML5", 10, 150);
+
+    }
+    );
+
+    $(
+function() {
+    var canvas = document.getElementById("mycanvas");
+    canvas.height = 500;
+    canvas.width = 500;
+    var context = canvas.getContext("2d");
+    context.translate(150, 150);
+    context.scale(0.7, 0.7);
+    context.font = "12px Tahoma";
+    for (var i = 0; i < 12; i++) {
+        context.fillText((i + 3) % 12 == 0 ? 12 : (i + 3) % 12, 150, 10);
+        context.rotate((Math.PI / 6));
+    }
+}
+);
+
+$(
+function() {
+    var canvas = document.getElementById("mycanvas");
+    canvas.height = 500;
+    canvas.width = 500;
+    var context = canvas.getContext("2d");
+    context.lineWidth = 1;
+    context.strokeStyle = "rgb(211,211,211)";
+
+    for (var i = 0; i < 50; i++) {
+        $.log(i);
+        context.moveTo(i * 10, 0);
+        context.lineTo(i * 10, 500);
+        context.stroke();
+    }
+
+    for (var i = 0; i < 50; i++) {
+        $.log(i);
+        context.moveTo(0, i * 10);
+        context.lineTo(500, i * 10);
+        context.stroke();
+    }
+}
+);  
+
+
+*/
+
+$(
+function() {
+    clock();
+    setInterval(clock, 1000);
+}
+);
+
+function clock() {
+    var canvas = document.getElementById("mycanvas");
+    canvas.height = 500;
+    canvas.width = 500;
+    var context = canvas.getContext("2d");
+
+    context.beginPath();
+    context.lineWidth = 1;
+    context.strokeStyle = "rgb(211,211,211)";
+
+
+    for (var i = 0; i < 50; i++) {
+        $.log(i);
+        context.moveTo(i * 10, 0);
+        context.lineTo(i * 10, 500);
+        context.stroke();
+    }
+
+    for (var i = 0; i < 50; i++) {
+        $.log(i);
+        context.moveTo(0, i * 10);
+        context.lineTo(500, i * 10);
+        context.stroke();
+    }
+    
+
+    context.beginPath();
+    context.strokeStyle = "rgb(255,0,0)";
+    context.arc(250, 250, 200, (Math.PI / 180) * 0, (Math.PI / 180) * 360, false);
+    context.stroke();
+
+    context.save(); //存储当前画布坐标系状态  
+    context.beginPath();
+    context.font = "14px Tahoma"
+    context.translate(255, 255); //将坐标系坐标原点移至图中间  
+    context.strokeStyle = "#FFFFFF";
+    for (var i = 0; i < 12; i++) {
+        context.fillText((i + 3) % 12 == 0 ? 12 : (i + 3) % 12, 180, 0);
+        context.rotate((Math.PI / 6));
+    }
+    context.restore();
+
+    context.save();
+    context.beginPath();
+    context.lineWidth = 5;
+    context.translate(255, 255); //将坐标系坐标原点移至图中间  
+    for (i = 0; i < 60; i++) {
+        if (i % 5 != 0) {
+            context.beginPath();
+            context.moveTo(180, 0);
+            context.lineTo(190, 0);
+            context.stroke();
+        }
+        context.rotate(Math.PI / 30);
+    }
+    context.restore();
+
+    var now = new Date();
+    var sec = now.getSeconds();
+    var min = now.getMinutes();
+    var hr = now.getHours() >= 12 ? now.getHours() - 12 : now.getHours();
+    context.save();
+    context.translate(255, 255); //将坐标系坐标原点移至图中间  
+    // - (Math.PI / 6) * 3 是因为0度在3点这里  
+    context.rotate(hr * (Math.PI / 6) + (Math.PI / 360) * min + (Math.PI / 21600) * sec - (Math.PI / 6) * 3);
+    context.lineWidth = 14;
+    context.beginPath();
+    context.moveTo(-20, 0);
+    context.lineTo(150, 0);
+    context.stroke();
+    context.restore();
+
+
+    context.save();
+    context.translate(255, 255); //将坐标系坐标原点移至图中间  
+    context.rotate(min * (Math.PI / 30) + (Math.PI / 1800) * sec - (Math.PI / 6) * 3)
+    context.lineWidth = 10;
+    context.beginPath();
+    context.moveTo(-28, 0);
+    context.lineTo(160, 0);
+    context.stroke();
+    context.restore();
+
+    context.save();
+    context.translate(255, 255); //将坐标系坐标原点移至图中间  
+    context.lineWidth = 1;
+    context.rotate(sec * (Math.PI / 30) + (Math.PI / 1800) * sec - (Math.PI / 6) * 3)
+    context.lineWidth = 10;
+    context.beginPath();
+    context.moveTo(-28, 0);
+    context.lineTo(160, 0);
+    context.stroke();
+    context.restore();
+}  
+
+		</script>
+	</body>
+</html>
